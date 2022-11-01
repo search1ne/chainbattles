@@ -9,10 +9,10 @@ import "@openzeppelin/contracts/utils/Base64.sol";
 
 
 // initialize the smart contract
-contract ChainBattles is ERC721URIStorage {     // inherit from ERC721 Standard
-    using Strings for uint256;  // convert unsigned integer 256 to strings
+contract ChainBattles is ERC721URIStorage {     
+    using Strings for uint256;  
     using Counters for Counters.Counter;    
-    Counters.Counter private _tokenIds; // create tokenIDs
+    Counters.Counter private _tokenIds; 
     
     struct Character {
         uint256 level;      // track level
@@ -21,15 +21,16 @@ contract ChainBattles is ERC721URIStorage {     // inherit from ERC721 Standard
         uint256 speed;      // track speed
     }    
 
-mapping(uint256 => Character) public tokenIdToLevels; // uint256 mapped to uint256. keep track of the NFT level.
+// Map to Character struct. tokenIdToLevels keeps track of the NFT level.
+mapping(uint256 => Character) public tokenIdToLevels; 
 
-constructor() ERC721 ("Chain Battles", "CBTLS"){    // takes two variables. name of contract
+constructor() ERC721 ("Chain Battles", "CBTLS"){
 
     }
 
 
 function getCharacter(uint256 tokenId) public returns(string memory){
-
+    // generated with image to svg converter from picsvg.com
     bytes memory svg = abi.encodePacked(
         '<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">',
         '<style>.character { fill: white; font-family: verdana; font-size: 40px; }</style>',
@@ -64,20 +65,21 @@ function getCharacter(uint256 tokenId) public returns(string memory){
 
 // Character statistics
 function getLevel(uint256 tokenId) public view returns (string memory){
-    uint256 _level = tokenIdToLevels[tokenId].level; // store .level from struct to _level
+    // store struct Character.level from Character struct as uint256 _level
+    uint256 _level = tokenIdToLevels[tokenId].level; 
     return _level.toString();
 }
-
+    // store struct Character.health from Character struct as uint256 _health
 function getHealth(uint256 tokenId) public view returns (string memory){
     uint256 _health = tokenIdToLevels[tokenId].health;
     return _health.toString();
 }
-
+    // store struct Character.strength as uint256 _strength
 function getStrength(uint256 tokenId) public view returns (string memory){
     uint256 _strength = tokenIdToLevels[tokenId].strength;
     return _strength.toString();
 }
-
+    // store struct Character.speed as uint256 _speed
 function getSpeed(uint256 tokenId) public view returns (string memory){
     uint256 _speed = tokenIdToLevels[tokenId].speed;
     return _speed.toString();
@@ -100,7 +102,6 @@ function getTokenURI(uint256 tokenId) public returns (string memory) {
     );
 }
 
-// mint function
 // Create a new NFT
 function mint() public {
     _tokenIds.increment();  // increment the value of tokenIds
@@ -126,11 +127,11 @@ function train(uint256 tokenId) public {
     uint256 currentSpeed = tokenIdToLevels[tokenId].speed;
 
     tokenIdToLevels[tokenId].level = currentLevel +1;
-        // randomize character stats
+    // randomize character stats
     tokenIdToLevels[tokenId].health = currentHealth + uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender))) % 20;
     tokenIdToLevels[tokenId].strength = currentStrength + uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender))) % 10;
     tokenIdToLevels[tokenId].speed = currentSpeed + uint(keccak256(abi.encodePacked(block.timestamp,block.difficulty,msg.sender))) % 15;
      
     _setTokenURI(tokenId, getTokenURI(tokenId));        // update the metadata to update the nft
-}
+    }
 }
